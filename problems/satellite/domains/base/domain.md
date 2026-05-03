@@ -78,4 +78,4 @@ Achieve a specified set of (direction, mode) image pairs. All required observati
 
 | name | n | k* | status | source | file | description |
 |---|---|---|---|---|---|---|
-| instance-01 | 3 | 5 | proven optimal | Long03 | instances/instance-01.pddl | 1 satellite, 1 instrument, 2 directions, 1 mode; single observation required |
+| instance-01 | 3 | 4 | proven optimal | Long03 | instances/instance-01.pddl | 1 satellite, 1 instrument, 2 directions, 1 mode; single observation required |

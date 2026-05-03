@@ -23,11 +23,10 @@
   (:domain satellite)
 
   (:objects
-    sat1          - satellite
-    groundstation0
-    star1         - direction
-    instrument0   - instrument
-    thermograph   - mode
+    sat1                    - satellite
+    groundstation0 star1    - direction
+    instrument0             - instrument
+    thermograph             - mode
   )
 
   (:init

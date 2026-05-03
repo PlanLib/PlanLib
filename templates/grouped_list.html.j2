@@ -28,10 +28,10 @@
   </div>
 </nav>
 
-<section class="hero" style="padding-top:48px;padding-bottom:40px">
+<section class="hero" style="padding-top:64px;padding-bottom:52px">
   <div class="hero-label">PlanLib</div>
   <h1 class="hero-title" style="font-size:clamp(28px,4vw,44px);margin-bottom:0">{{ page_title }}</h1>
-  {% if description %}<p class="hero-body" style="margin-top:14px;margin-bottom:0">{{ description }}</p>{% endif %}
+  {% if description %}<p class="hero-body" style="margin-top:16px;margin-bottom:0">{{ description }}</p>{% endif %}
 </section>
 
 <section class="section" style="padding-top:36px">
@@ -46,7 +46,7 @@
   <div class="problem-list" id="group-list">
     {% for group in groups %}
     <a class="problem-row" href="{{ group.slug }}/">
-      <div>
+      <div style="grid-column:1/-1">
         <div class="prob-title">{{ group.label }}</div>
         <div class="prob-sub">{{ group.problems | length }} problem{{ 's' if group.problems | length != 1 else '' }}</div>
       </div>

@@ -6,7 +6,7 @@ subtitle: "Multiple orbiting satellites, each with calibrated instruments, must 
 proposers: ["Maria Fox", "Derek Long"]
 origin: "IPC 2002 (3rd International Planning Competition)"
 origin_year: 2002
-last_updated: "2026-04-27"
+last_updated: "2026-04-28"
 category: Classical
 tags: ["Classical", "Fully Observable", "Deterministic", "Single Agent", "Typed PDDL"]
 languages: ["PDDL 2.1"]
@@ -41,4 +41,4 @@ The numeric variant from IPC 2004 adds `fuel`, `fuel-use`, `slew-time`, `data`, 
 |---|---|---|---|
 | Plan existence | classical typed formulation | PSPACE-complete | hard |
 | Optimal plan length | | PSPACE-complete | hard |
-| Satisficing plan | ignoring calibration dependencies | P | easy |
+| Satisficing plan | systematic per-observation scheduling | P | easy |

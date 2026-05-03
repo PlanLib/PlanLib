@@ -28,7 +28,7 @@
   ; so add and delete effects are applied simultaneously.
   (:action flip
     :parameters (?pala - position)
-    :precondition ()
+    :precondition (and)
     :effect (and
       (forall (?t ?tnext - tile ?p ?pnext - position)
         (when (and (lte ?p ?pala)

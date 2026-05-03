@@ -6,7 +6,7 @@ subtitle: "Arrange a stack of n distinct-size pancakes into sorted order using o
 proposers: ["Jacob E. Goodman"]
 origin: "Goodman (as Harry Dweighter), 1975"
 origin_year: 1975
-last_updated: "2026-04-27"
+last_updated: "2026-04-28"
 category: Classical
 tags: ["Classical", "Fully Observable", "Deterministic", "Single Agent", "STRIPS"]
 languages: ["PDDL 2.1", "PDDL-XDS"]

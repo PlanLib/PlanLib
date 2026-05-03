@@ -18,10 +18,15 @@ venue: Proceedings of the 37th International Symposium on Mathematical Foundatio
 url: https://doi.org/10.1007/978-3-642-32589-2_16
 note: Proves that computing the pancake number (minimum flips) is NP-hard
 
-[Carla25]: Thispaper
+[Carla25]: Typed-variant PDDL 2.1 formulation of Pancake Sorting
 authors: Carla
-venue: 2025
-note: Instance contribution — typed-variant formulation
+venue: Unpublished contribution, 2025
+note: Defines the typed-variant domain and the MyInstance benchmark
+
+[Isaac26]: Extended Data Structures formulation of Pancake Sorting (PDDL-XDS)
+authors: Isaac Ochoa Garriga
+venue: Unpublished contribution, 2026
+note: Defines the extended-data-structures domain variant using array types and bulk array mutation
 
 ## BibTeX
 
