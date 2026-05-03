@@ -96,10 +96,16 @@
        data-ipc="{{ problem.ipc_editions | join(',') }}"
        data-lang="{{ problem.languages | join(',') }}"
        data-search="{{ search_text }}">
-      <span class="prob-id">{{ problem.id }}</span>
+      <div class="prob-id-col">
+        <span class="prob-id">{{ problem.id }}</span>
+        {% if problem.origin_year %}<span class="prob-year">{{ problem.origin_year }}</span>{% endif %}
+      </div>
       <div>
         <div class="prob-title">{{ problem.title }}</div>
         <div class="prob-sub">{{ problem.subtitle }}</div>
+        {% set nd = problem.domains.entries | length %}
+        {% set ni = problem.instances.rows | length %}
+        <div class="prob-count">{{ nd }} domain{{ 's' if nd != 1 else '' }} · {{ ni }} instance{{ 's' if ni != 1 else '' }}</div>
       </div>
       <div class="prob-tags">
         {% for t in ns.disp %}

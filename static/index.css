@@ -84,13 +84,17 @@ a { color:inherit; text-decoration:none; }
 
 /* ── Problem list ── */
 .problem-list { display:flex; flex-direction:column; }
-.problem-row { display:grid; grid-template-columns:80px 1fr auto; align-items:baseline; gap:24px; padding:18px 0; border-bottom:1px solid #1a1a1a; text-decoration:none; color:inherit; }
+.problem-row { display:grid; grid-template-columns:80px 1fr auto; align-items:start; gap:24px; padding:20px 0; border-bottom:1px solid #1a1a1a; text-decoration:none; color:inherit; transition:background .12s, box-shadow .12s; }
 .problem-row:last-child { border-bottom:none; }
+.problem-row:hover { background:#131313; box-shadow:inset 3px 0 0 var(--accent); }
 .problem-row:hover .prob-title { color:var(--accent); }
+.prob-id-col { display:flex; flex-direction:column; gap:4px; padding-top:2px; }
 .prob-id   { font-size:11px; color:var(--muted); letter-spacing:.1em; white-space:nowrap; }
+.prob-year { font-size:11px; color:#3a3a3a; letter-spacing:.05em; }
 .prob-title{ font-family:var(--serif); font-size:17px; font-weight:700; color:#fff; margin-bottom:3px; transition:color .15s; }
-.prob-sub  { font-size:12px; color:#777; line-height:1.7; }
-.prob-tags { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+.prob-sub  { font-size:12px; color:#777; line-height:1.7; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.prob-count{ font-size:11px; color:#484848; margin-top:6px; letter-spacing:.02em; }
+.prob-tags { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; padding-top:2px; }
 .tag { font-size:10px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; padding:2px 8px; border-radius:2px; white-space:nowrap; }
 .tag-green   { background:#1f2a10; color:var(--accent);  border:1px solid #3a4a10; }
 .tag-blue    { background:#0d1f28; color:var(--accent2); border:1px solid #1a3a50; }
@@ -111,6 +115,7 @@ a { color:inherit; text-decoration:none; }
   .topbar,.hero,.section,.footer { padding-left:20px; padding-right:20px; }
   .contribute { grid-template-columns:1fr; }
   .problem-row { grid-template-columns:60px 1fr; }
+  .prob-year, .prob-count { display:none; }
   .prob-tags { display:none; }
   .search-row { flex-direction:column; align-items:stretch; }
 }
