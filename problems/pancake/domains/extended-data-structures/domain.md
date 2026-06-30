@@ -1,8 +1,8 @@
 ---
-title: "Extended Data Structures"
-language: PDDL-XDS
+title: "Extended Type Structures with arrays"
+language: PDDL-XTS
 source: Isaac26
-notes: "Non-standard PDDL-XDS formulation using bounded-integer types and array mutation. The stack is a single array variable; the flip action performs an in-place reversal of the prefix [0..?f] in one step. Much more compact than the relational typed variant."
+notes: "Non-standard PDDL-XTS formulation using bounded-integer types and array mutation. The stack is a single array variable; the flip action performs an in-place reversal of the prefix [0..?f] in one step. Much more compact than the relational typed variant."
 instances_description: "Parameterised by n (number of pancakes), encoded as a bounded integer type (number 0 n-1). The array stack has exactly n slots."
 generator_note: "Instances are described by the initial permutation of the array; goal is always the sorted order."
 ---
@@ -32,8 +32,6 @@ preconditions: -
 add effects:   ∀ i ∈ [0, ?f]: pancake_stack[i] := pancake_stack[?f − i]
 del effects:   (implicit: old values of pancake_stack[0..?f] are overwritten)
 ```
-
-The array update is expressed as a bulk assignment using PDDL-XDS array-mutation syntax. All positions outside [0..?f] are unaffected.
 
 ## Goal
 

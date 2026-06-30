@@ -24,7 +24,7 @@ Brief history of first time appearence, context and if applicable appearences in
 ## Variants
 
 - [Different] (https://to.other.problem)
-- [Variants]#domain-to-viewpoint-of-problem
+- [Variants] (#domain-to-viewpoint-of-problem)
 - Of
 - The
 - Problem

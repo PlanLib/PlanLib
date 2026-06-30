@@ -2,12 +2,13 @@
 title: PDDL Domain (typed STRIPS)
 language: PDDL 2.1
 source: IPC00LogArchive
-notes: Full IPC 2000 type hierarchy. Requires :typing. Semantics identical to the base domain.
+viewpoint_group: strips-transport
+notes: "Full IPC 2000 type hierarchy (place > airport, location; physobj > package, vehicle > truck, airplane). Semantics identical to the untyped base; typing eliminates unary category predicates and constrains groundings."
 ---
 
 ## State Space
 
-Identical to the base domain. Type constraints reduce the number of groundings at no semantic cost.
+Identical to the untyped formulation: a state records the location of every package and every vehicle, with city–place membership encoded as static predicates. The type hierarchy replaces unary category predicates and reduces the number of valid action groundings at no semantic cost.
 
 ## Types
 

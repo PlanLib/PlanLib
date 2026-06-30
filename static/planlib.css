@@ -104,6 +104,18 @@ td.opt { color:var(--accent); font-weight:600; }
 td.status { color:#aaa; font-size:11px; }
 .inst-row-chev { color:var(--muted); font-size:10px; margin-left:4px; transition:transform .2s; display:inline-block; }
 
+/* ── Implementation cards (nested inside viewpoint cards for multi-domain viewpoints) ── */
+.impl-card { background:#0d0d0d; border:1px solid #222; border-radius:3px; margin:10px 0; overflow:hidden; }
+.impl-card:first-child { margin-top:0; }
+.impl-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 14px; border-bottom:1px solid #1e1e1e; background:#111; }
+.impl-title { font-weight:600; font-size:13px; color:#ddd; }
+.impl-notes { padding:8px 14px; font-size:12px; color:var(--muted); border-bottom:1px solid #1a1a1a; line-height:1.8; }
+.impl-source { padding:6px 14px; font-size:11px; color:var(--muted); border-bottom:1px solid #1a1a1a; }
+.impl-pddl { padding:14px; border-bottom:1px solid #1a1a1a; }
+.impl-pddl h3 { margin-top:0; }
+.impl-instances { padding:12px 14px; }
+.impl-instances h3 { margin-top:0; }
+
 /* ── Ref link ── */
 .ref-link { font-size:11px; font-weight:600; color:var(--accent); letter-spacing:.05em; border-bottom:1px dashed #3a4a10; padding-bottom:1px; cursor:pointer; transition:color .15s,border-color .15s; }
 .ref-link:hover { color:#fff; border-color:#fff; }

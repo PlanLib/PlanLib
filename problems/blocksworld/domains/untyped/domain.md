@@ -2,7 +2,8 @@
 title: PDDL Domain (4-operator, untyped)
 language: PDDL 1.2
 source: FikesNilsson71
-notes: Core STRIPS domain. Object types are not declared; predicates use untyped variables. Compatible with all PDDL 1.x and 2.x planners.
+viewpoint_group: strips-4op
+notes: "Core untyped STRIPS formulation. No :types block; predicates use untyped variables throughout. Compatible with all PDDL 1.x and 2.x planners."
 instances_description: "Benchmark instances of varying size. n is the number of blocks; k* is the proven optimal plan length unless marked otherwise."
 generator_note: "Random instances are parameterised by n (number of blocks) and the number of target stacks. The official IPC 2000 instances are archived at https://github.com/potassco/pddl-instances/tree/master/ipc-2000/domains/blocks-strips-untyped"
 ---

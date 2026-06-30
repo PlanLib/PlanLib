@@ -16,7 +16,7 @@ complexity_summary: {optimal: PSPACE-complete, suboptimal: P}
 
 ## Description
 
-The Blocksworld is the oldest and most widely studied domain in automated planning. A flat table holds an unlimited supply of identically sized cubic blocks. A single robot arm can perform one action at a time: pick up a clear block and either place it on the table or stack it on another clear block. Given an arbitrary initial configuration and a goal configuration, the task is to find a sequence of actions that transforms the world from the initial state into the goal.
+The Blocksworld is the oldest and most widely studied domain in automated planning. A flat table holds an unlimited supply of identically sized cubic blocks. A single robot arm can perform one action at a time: pick up a clear block and either place it on the table or stack it on another clear block. Given an arbitrary initial configuration and a goal configuration, the task is to find a sequence of actions that transforms the table from the initial state into the goal.
 
 ## History
 

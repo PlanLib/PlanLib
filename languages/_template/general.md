@@ -24,7 +24,3 @@ TODO: List the key constructs this language introduces or supports.
 ## History
 
 TODO: When and why this language was introduced. How it relates to the IPC. How it evolved.
-
-## References
-
-TODO: Cite the defining paper or standard document.

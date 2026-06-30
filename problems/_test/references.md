@@ -1,9 +1,0 @@
-## References
-
-
-
-## BibTeX
-
-```bibtex
-
-```

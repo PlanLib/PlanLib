@@ -20,7 +20,6 @@ Examples:
 Problem directory structure:
     prob001-blocksworld/
       general.md          -- front matter + Description, History, Variants, Complexity
-      references.md       -- ## References and ## BibTeX  (optional)
       domains/
         <key>/
           domain.md       -- domain front matter + State Space, Types, Objects,
@@ -235,6 +234,8 @@ def parse_domain_md(domain_md_path: Path, key: str) -> tuple[dict, list[dict]]:
         'file':     f"domains/{key}/domain.pddl",
         'notes':    fm.get('notes', ''),
         'viewpoint': viewpoint,
+        'viewpoint_group': fm.get('viewpoint_group') or None,
+        'viewpoint_title': fm.get('viewpoint_title') or None,
         # stash per-domain instance metadata; caller may use as fallback
         '_instances_description': fm.get('instances_description', ''),
         '_generator_note':        fm.get('generator_note', ''),
@@ -244,44 +245,6 @@ def parse_domain_md(domain_md_path: Path, key: str) -> tuple[dict, list[dict]]:
 
     return entry, inst_rows
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# References markdown parser
-# ══════════════════════════════════════════════════════════════════════════════
-
-def parse_references_md(ref_text: str) -> tuple[list[dict], str]:
-    """Parse references.md -> (refs list, bibtex string).
-
-    The file starts with ## References (no front matter expected, but handled).
-    """
-    if ref_text.lstrip().startswith('---'):
-        _, body = _split_fm(ref_text)
-    else:
-        body = ref_text
-
-    top = _split_sections(body)
-
-    refs: list[dict] = []
-    current_ref: dict | None = None
-    for ln in top.get('References', '').splitlines():
-        ln = ln.strip()
-        m = re.match(r'^\[(\w+)\]:\s*(.+)$', ln)
-        if m:
-            if current_ref:
-                refs.append(current_ref)
-            current_ref = {'key': m.group(1), 'title': m.group(2).strip()}
-        elif current_ref:
-            kv = re.match(r'^(\w[\w ]*?):\s*(.+)$', ln)
-            if kv:
-                current_ref[kv.group(1).strip().lower()] = kv.group(2).strip()
-    if current_ref:
-        refs.append(current_ref)
-
-    bibtex_raw = top.get('BibTeX', '')
-    bm = re.search(r'```(?:bibtex)?\n(.*?)```', bibtex_raw, re.DOTALL)
-    bibtex = bm.group(1).strip() if bm else ''
-
-    return refs, bibtex
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -438,6 +401,23 @@ def parse_problem_dir(prob_dir: Path) -> dict:
         entry.pop('_instances_description', None)
         entry.pop('_generator_note', None)
 
+    # Assign global indices and group into viewpoints
+    viewpoints_map: dict[str, dict] = {}
+    for i, entry in enumerate(domain_entries):
+        entry['_idx'] = i
+        vg_key   = entry.pop('viewpoint_group', None) or entry['key']
+        vg_title = entry.pop('viewpoint_title', None) or entry['title']
+        if vg_key not in viewpoints_map:
+            viewpoints_map[vg_key] = {
+                'key':         vg_key,
+                'title':       vg_title,
+                'description': entry['viewpoint'],
+                'domains':     [],
+            }
+        viewpoints_map[vg_key]['domains'].append(entry)
+
+    problem['viewpoints'] = list(viewpoints_map.values())
+
     problem['domains'] = {
         'entries': domain_entries,
     }
@@ -446,16 +426,6 @@ def parse_problem_dir(prob_dir: Path) -> dict:
         'generator_note': gen_note,
         'rows':           all_inst_rows,
     }
-
-    # ── References + BibTeX ───────────────────────────────────────────────────
-    ref_path = prob_dir / 'references.md'
-    if ref_path.exists():
-        refs, bibtex = parse_references_md(ref_path.read_text(encoding='utf-8'))
-    else:
-        refs, bibtex = [], ''
-
-    problem['references'] = refs
-    problem['bibtex']     = bibtex
 
     return problem
 
@@ -699,17 +669,6 @@ def _serialize_problem_for_form(p: dict) -> dict:
             '_file':       rfile.split('/')[-1] if rfile else '',
             '_content':    row.get('_content', '') or '',
         })
-    refs = [
-        {
-            'key':     ref.get('key', ''),
-            'title':   ref.get('title', ''),
-            'authors': ref.get('authors', '') or '',
-            'venue':   ref.get('venue', '') or '',
-            'url':     ref.get('url', '') or '',
-            'note':    ref.get('note', '') or '',
-        }
-        for ref in p.get('references', [])
-    ]
     return {
         'slug':         p.get('slug', ''),
         'title':        p.get('title', ''),
@@ -727,7 +686,6 @@ def _serialize_problem_for_form(p: dict) -> dict:
         'complexity':   p.get('formal', {}).get('complexity', []),
         'domains':      domains,
         'instances':    instances,
-        'references':   refs,
     }
 
 
@@ -896,27 +854,6 @@ TODO: when and where was this domain introduced? Mention IPC editions if applica
 | Satisficing plan | | | easy |
 """
 
-    # ── references.md ─────────────────────────────────────────────────────────
-    references_md = """\
-## References
-
-[Key1]: TODO: full title of the paper
-  authors: TODO
-  venue: TODO: conference name, year
-  url: https://doi.org/...
-
-## BibTeX
-
-```bibtex
-@inproceedings{key1,
-  author    = {TODO},
-  title     = {TODO},
-  booktitle = {TODO},
-  year      = {YYYY},
-}
-```
-"""
-
     # ── domain.md (one per key) ───────────────────────────────────────────────
     def domain_md(key: str) -> str:
         return f"""\
@@ -971,8 +908,7 @@ TODO: describe the goal condition.
 
     # ── Write everything ──────────────────────────────────────────────────────
     prob_dir.mkdir(parents=True)
-    (prob_dir / 'general.md').write_text(general_md,    encoding='utf-8')
-    (prob_dir / 'references.md').write_text(references_md, encoding='utf-8')
+    (prob_dir / 'general.md').write_text(general_md, encoding='utf-8')
 
     for key in domain_keys:
         domain_dir = prob_dir / 'domains' / key
@@ -984,7 +920,6 @@ TODO: describe the goal condition.
 
     print(f"Created {prob_dir}/")
     print(f"  general.md  (id will be assigned on first build)")
-    print(f"  references.md")
     for key in domain_keys:
         print(f"  domains/{key}/domain.md")
         print(f"  domains/{key}/domain.pddl")
@@ -1251,8 +1186,14 @@ def main():
             sys.exit(f"Output directory not found: {output_dir}  (run 'build --all' first)")
         os.chdir(output_dir)
         addr = ('', args.port)
-        handler = http.server.SimpleHTTPRequestHandler
-        with http.server.HTTPServer(addr, handler) as srv:
+        class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+            def end_headers(self):
+                self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+                super().end_headers()
+            def log_message(self, fmt, *args):  # suppress per-request noise
+                pass
+
+        with http.server.HTTPServer(addr, NoCacheHandler) as srv:
             print(f"Serving {output_dir.resolve()} at http://localhost:{args.port}/")
             print("Press Ctrl+C to stop.")
             try:

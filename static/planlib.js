@@ -17,17 +17,17 @@ function jumpToRef(key) {
   }, 50);
 }
 
-// ── Jump to domain card (switches to Domains tab, opens + scrolls) ────────
+// ── Jump to viewpoint card (switches to Domains tab, opens + scrolls) ────────
 function jumpToDomain(key) {
   const tab = [...document.querySelectorAll('.tab')]
     .find(t => t.textContent.trim().toLowerCase() === 'domains');
   if (tab) show('domains', tab);
   setTimeout(() => {
-    const card = document.getElementById('domain-' + key);
+    const card = document.getElementById('vp-' + key);
     if (card) {
-      const body    = document.getElementById('body-domain-'    + key);
-      const chevron = document.getElementById('chevron-domain-' + key);
-      const header  = document.getElementById('header-domain-'  + key);
+      const body    = document.getElementById('body-vp-'    + key);
+      const chevron = document.getElementById('chevron-vp-' + key);
+      const header  = document.getElementById('header-vp-'  + key);
       if (body && !body.classList.contains('open')) {
         body.classList.add('open');
         if (chevron) chevron.classList.add('open');
@@ -69,5 +69,7 @@ if (window.location.hash) {
     if (tab) show('references', tab);
   } else if (hash.startsWith('domain-')) {
     jumpToDomain(hash.slice(7));
+  } else if (hash.startsWith('vp-')) {
+    jumpToDomain(hash.slice(3));
   }
 }

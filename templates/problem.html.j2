@@ -48,7 +48,6 @@
 <div class="tabs">
   <div class="tab active" onclick="show('description',this)">Description</div>
   <div class="tab" onclick="show('domains',this)">Domains</div>
-  <div class="tab" onclick="show('references',this)">References</div>
 </div>
 
 {# ═══════════════════════════════════════════════════════════════ DESCRIPTION #}
@@ -112,173 +111,218 @@
 {# ═══════════════════════════════════════════════════════════════ DOMAINS #}
 <div id="domains" class="panel">
 
-  {% for domain in problem.domains.entries %}
-  {% set card_id = 'domain-' ~ domain.key %}
+  {% for vp in problem.viewpoints %}
+  {% set vp_card_id = 'vp-' ~ vp.key %}
+  {% set d = vp.description %}
+  {% set single = vp.domains | length == 1 %}
 
-  {# Collect instances for this domain #}
-  {% set ns = namespace(domain_instances=[]) %}
-  {% for row in problem.instances.rows %}
-    {% if row.domain == domain.key %}
-      {% set ns.domain_instances = ns.domain_instances + [row] %}
-    {% endif %}
-  {% endfor %}
-
-  <div class="domain-card" id="{{ card_id }}">
+  <div class="domain-card" id="{{ vp_card_id }}">
 
     {# ── Card header ── #}
-    <div class="domain-card-header" id="header-{{ card_id }}" onclick="toggleCard('{{ card_id }}')">
-      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-        <span class="domain-card-title">{{ domain.title }}</span>
-      </div>
+    <div class="domain-card-header" id="header-{{ vp_card_id }}" onclick="toggleCard('{{ vp_card_id }}')">
+      <span class="domain-card-title">{{ vp.title }}</span>
       <div class="domain-card-meta">
-        <span class="lang-badge">{{ domain.language }}</span>
-        {% if domain._content is defined and domain._content %}
-        <button class="file-link" onclick="event.stopPropagation(); downloadDomainZip({{ loop.index0 }})">
+        {% if single %}
+        <span class="lang-badge">{{ vp.domains[0].language }}</span>
+        {% if vp.domains[0]._content is defined and vp.domains[0]._content %}
+        <button class="file-link" onclick="event.stopPropagation(); downloadDomainZip({{ vp.domains[0]._idx }})">
           <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
           zip
         </button>
         {% endif %}
-        <span class="chevron" id="chevron-{{ card_id }}">▾</span>
+        {% endif %}
+        <span class="chevron" id="chevron-{{ vp_card_id }}">▾</span>
       </div>
     </div>
 
     {# ── Card body ── #}
-    <div class="domain-card-body" id="body-{{ card_id }}">
+    <div class="domain-card-body" id="body-{{ vp_card_id }}">
 
-      {# Notes #}
-      {% if domain.notes %}<div class="domain-notes">{{ domain.notes }}</div>{% endif %}
-
-      {# Source #}
-      {% if domain.source_ref is defined and domain.source_ref %}
-      <div class="domain-source">Source: <a class="ref-link" onclick="jumpToRef('{{ domain.source_ref }}')">[{{ domain.source_ref }}]</a></div>
+      {# Notes + source for single-domain viewpoints #}
+      {% if single %}
+      {% if vp.domains[0].notes %}<div class="domain-notes">{{ vp.domains[0].notes }}</div>{% endif %}
+      {% if vp.domains[0].source_ref is defined and vp.domains[0].source_ref %}
+      <div class="domain-source">Source: <a class="ref-link" onclick="jumpToRef('{{ vp.domains[0].source_ref }}')">[{{ vp.domains[0].source_ref }}]</a></div>
+      {% endif %}
       {% endif %}
 
-      {% set vp = domain.viewpoint if (domain.viewpoint is defined) else problem.formal %}
-      {% if vp is defined %}
-
-      {# State Space / Types / Objects #}
-      {% if vp.state_space or vp.types or vp.objects %}
+      {# ── Conceptual description ── #}
+      {% if d.state_space or d.types or d.objects %}
       <div class="domain-section">
-        {% if vp.state_space %}<h3>State Space</h3>{{ vp.state_space | md_body }}{% endif %}
-        {% if vp.types %}
+        {% if d.state_space %}<h3>State Space</h3>{{ d.state_space | md_body }}{% endif %}
+        {% if d.types %}
         <h3>Types</h3>
         <div class="pred-grid">
-          {% for t in vp.types %}
+          {% for t in d.types %}
           <div class="pred-item"><div class="pred-name">{{ t.name }}</div><div class="pred-desc">→ {{ t.parent }}</div></div>
           {% endfor %}
         </div>
         {% endif %}
-        {% if vp.objects %}<h3>Objects</h3>{{ vp.objects | md_body }}{% endif %}
+        {% if d.objects %}<h3>Objects</h3>{{ d.objects | md_body }}{% endif %}
       </div>
       {% endif %}
 
-      {# Predicates #}
-      {% if vp.predicates is defined %}
+      {% if d.predicates %}
       <div class="domain-section">
         <h3>Predicates</h3>
         <div class="pred-grid">
-          {% for pred in vp.predicates %}
+          {% for pred in d.predicates %}
           <div class="pred-item"><div class="pred-name">{{ pred.name }}</div><div class="pred-desc">{{ pred.desc }}</div></div>
           {% endfor %}
         </div>
       </div>
       {% endif %}
 
-      {# Actions + Goal #}
-      {% if vp.actions is defined %}
+      {% if d.actions %}
       <div class="domain-section">
         <h3>Actions</h3>
-        {% for action in vp.actions %}
+        {% for action in d.actions %}
         <div class="code-wrap">
           <div class="code-header"><div class="code-header-left"><span class="fname">{{ action.name }}</span><span style="color:var(--muted)">{{ action.desc }}</span></div></div>
           <pre class="pddl">{{ action.schema | e }}</pre>
         </div>
         {% endfor %}
-        {% if vp.goal %}<h3>Goal</h3>{{ vp.goal | md_body }}{% endif %}
+        {% if d.goal %}<h3>Goal</h3>{{ d.goal | md_body }}{% endif %}
       </div>
       {% endif %}
 
-      {# PDDL source #}
-      {% if domain._content is defined and domain._content %}
-      <div class="domain-section">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-          <h3 style="margin:0">PDDL Source</h3>
-          <button class="file-link" onclick="downloadText('{{ domain.file.split('/')[-1] }}', domainContents[{{ loop.index0 }}])">
-            <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-            Domain
-          </button>
+      {# ── Implementation(s) ── #}
+      {% if single %}
+        {# Single domain: render PDDL + instances directly (no sub-card wrapper) #}
+        {% set domain = vp.domains[0] %}
+        {% set ns = namespace(domain_instances=[]) %}
+        {% for row in problem.instances.rows %}
+          {% if row.domain == domain.key %}{% set ns.domain_instances = ns.domain_instances + [row] %}{% endif %}
+        {% endfor %}
+
+        {% if domain._content is defined and domain._content %}
+        <div class="domain-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <h3 style="margin:0">PDDL Source</h3>
+            <button class="file-link" onclick="downloadText('{{ domain.file.split('/')[-1] }}', domainContents[{{ domain._idx }}])">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+              Domain
+            </button>
+          </div>
+          <pre class="pddl">{{ domain._content | e }}</pre>
         </div>
-        <pre class="pddl">{{ domain._content | e }}</pre>
-      </div>
-      {% endif %}
-
-      {% endif %}{# end viewpoint #}
-
-      {# Instances for this domain #}
-      {% if ns.domain_instances %}
-      <div class="inst-list">
-        <h3>Instances</h3>
-        {% if problem.instances.description %}<p style="font-size:12px;color:var(--muted);margin-bottom:10px">{{ problem.instances.description }}</p>{% endif %}
-        <table class="inst">
-          <thead>
-            <tr><th>#</th><th>Name</th><th>n</th><th>opt. cost</th><th>Status</th><th>Source</th><th>File</th></tr>
-          </thead>
-          <tbody>
-            {%- set global_idx = problem.instances.rows | map(attribute='id') | list %}
-            {% for row in ns.domain_instances %}
-            {%- set has_detail = row.description is defined and row.description %}
-            <tr id="inst-{{ row.id }}"{% if has_detail %} class="inst-row" onclick="toggleInstRow('{{ row.id }}')" style="cursor:pointer"{% endif %}>
-              <td>{{ row.id }}{% if has_detail %} <span class="inst-row-chev" id="inst-chev-{{ row.id }}">▾</span>{% endif %}</td>
-              <td>{{ row.name }}</td>
-              <td>{{ row.n if row.n is not none else '—' }}</td>
-              <td class="opt">{{ row.optimal if row.optimal is not none else '—' }}</td>
-              <td class="status">{{ row.status }}</td>
-              <td>{% if row.source_ref %}<a class="ref-link" onclick="jumpToRef('{{ row.source_ref }}')">[{{ row.source_ref }}]</a>{% else %}—{% endif %}</td>
-              <td>{% if row.file and row._content is defined and row._content %}<button class="file-link" onclick="event.stopPropagation();downloadText('{{ row.file.split('/')[-1] }}', instanceContents[{{ global_idx.index(row.id) }}])"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>.pddl</button>{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
-            </tr>
-            {% if has_detail %}
-            <tr id="inst-det-{{ row.id }}" style="display:none">
-              <td colspan="7" style="padding:0">
-                <div style="padding:10px 16px;background:#0a0f00;border-top:1px solid #1a2800">
-                  <p style="font-size:12px;color:#aaa;margin:0;line-height:1.7">{{ row.description }}</p>
-                </div>
-              </td>
-            </tr>
-            {% endif %}
-            {% endfor %}
-          </tbody>
-        </table>
-        {% if problem.instances.generator_note %}
-        {% for para in problem.instances.generator_note.split('\n\n') %}<p style="font-size:12px;color:var(--muted);margin-top:8px">{{ para }}</p>{% endfor %}
         {% endif %}
-      </div>
+
+        {% if ns.domain_instances %}
+        <div class="inst-list">
+          <h3>Instances</h3>
+          {% if problem.instances.description %}<p style="font-size:12px;color:var(--muted);margin-bottom:10px">{{ problem.instances.description }}</p>{% endif %}
+          <table class="inst">
+            <thead><tr><th>#</th><th>Name</th><th>n</th><th>opt. cost</th><th>Status</th><th>Source</th><th>File</th></tr></thead>
+            <tbody>
+              {%- set global_idx = problem.instances.rows | map(attribute='id') | list %}
+              {% for row in ns.domain_instances %}
+              {%- set has_detail = row.description is defined and row.description %}
+              <tr id="inst-{{ row.id }}"{% if has_detail %} class="inst-row" onclick="toggleInstRow('{{ row.id }}')" style="cursor:pointer"{% endif %}>
+                <td>{{ row.id }}{% if has_detail %} <span class="inst-row-chev" id="inst-chev-{{ row.id }}">▾</span>{% endif %}</td>
+                <td>{{ row.name }}</td>
+                <td>{{ row.n if row.n is not none else '—' }}</td>
+                <td class="opt">{{ row.optimal if row.optimal is not none else '—' }}</td>
+                <td class="status">{{ row.status }}</td>
+                <td>{% if row.source_ref %}<a class="ref-link" onclick="jumpToRef('{{ row.source_ref }}')">[{{ row.source_ref }}]</a>{% else %}—{% endif %}</td>
+                <td>{% if row.file and row._content is defined and row._content %}<button class="file-link" onclick="event.stopPropagation();downloadText('{{ row.file.split('/')[-1] }}', instanceContents[{{ global_idx.index(row.id) }}])"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>.pddl</button>{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+              </tr>
+              {% if has_detail %}
+              <tr id="inst-det-{{ row.id }}" style="display:none">
+                <td colspan="7" style="padding:0"><div style="padding:10px 16px;background:#0a0f00;border-top:1px solid #1a2800"><p style="font-size:12px;color:#aaa;margin:0;line-height:1.7">{{ row.description }}</p></div></td>
+              </tr>
+              {% endif %}
+              {% endfor %}
+            </tbody>
+          </table>
+          {% if problem.instances.generator_note %}
+          {% for para in problem.instances.generator_note.split('\n\n') %}<p style="font-size:12px;color:var(--muted);margin-top:8px">{{ para }}</p>{% endfor %}
+          {% endif %}
+        </div>
+        {% endif %}
+
+      {% else %}
+        {# Multiple domains: each rendered as a sub-card #}
+        <div class="domain-section">
+          <h3>Implementations</h3>
+          {% for domain in vp.domains %}
+          {% set ns = namespace(domain_instances=[]) %}
+          {% for row in problem.instances.rows %}
+            {% if row.domain == domain.key %}{% set ns.domain_instances = ns.domain_instances + [row] %}{% endif %}
+          {% endfor %}
+
+          <div class="impl-card">
+            <div class="impl-header">
+              <span class="impl-title">{{ domain.title }}</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="lang-badge">{{ domain.language }}</span>
+                {% if domain._content is defined and domain._content %}
+                <button class="file-link" onclick="downloadDomainZip({{ domain._idx }})">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  zip
+                </button>
+                {% endif %}
+              </div>
+            </div>
+            {% if domain.notes %}<div class="impl-notes">{{ domain.notes }}</div>{% endif %}
+            {% if domain.source_ref is defined and domain.source_ref %}
+            <div class="impl-source">Source: <a class="ref-link" onclick="jumpToRef('{{ domain.source_ref }}')">[{{ domain.source_ref }}]</a></div>
+            {% endif %}
+            {% if domain._content is defined and domain._content %}
+            <div class="impl-pddl">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                <h3 style="margin:0">PDDL Source</h3>
+                <button class="file-link" onclick="downloadText('{{ domain.file.split('/')[-1] }}', domainContents[{{ domain._idx }}])">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  Domain
+                </button>
+              </div>
+              <pre class="pddl">{{ domain._content | e }}</pre>
+            </div>
+            {% endif %}
+            {% if ns.domain_instances %}
+            <div class="impl-instances">
+              <h3>Instances</h3>
+              {% if problem.instances.description %}<p style="font-size:12px;color:var(--muted);margin-bottom:10px">{{ problem.instances.description }}</p>{% endif %}
+              <table class="inst">
+                <thead><tr><th>#</th><th>Name</th><th>n</th><th>opt. cost</th><th>Status</th><th>Source</th><th>File</th></tr></thead>
+                <tbody>
+                  {%- set global_idx = problem.instances.rows | map(attribute='id') | list %}
+                  {% for row in ns.domain_instances %}
+                  {%- set has_detail = row.description is defined and row.description %}
+                  <tr id="inst-{{ row.id }}"{% if has_detail %} class="inst-row" onclick="toggleInstRow('{{ row.id }}')" style="cursor:pointer"{% endif %}>
+                    <td>{{ row.id }}{% if has_detail %} <span class="inst-row-chev" id="inst-chev-{{ row.id }}">▾</span>{% endif %}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.n if row.n is not none else '—' }}</td>
+                    <td class="opt">{{ row.optimal if row.optimal is not none else '—' }}</td>
+                    <td class="status">{{ row.status }}</td>
+                    <td>{% if row.source_ref %}<a class="ref-link" onclick="jumpToRef('{{ row.source_ref }}')">[{{ row.source_ref }}]</a>{% else %}—{% endif %}</td>
+                    <td>{% if row.file and row._content is defined and row._content %}<button class="file-link" onclick="event.stopPropagation();downloadText('{{ row.file.split('/')[-1] }}', instanceContents[{{ global_idx.index(row.id) }}])"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 1v5M2.5 4.5L5 7l2.5-2.5M1 8.5h8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>.pddl</button>{% else %}<span style="color:var(--muted)">—</span>{% endif %}</td>
+                  </tr>
+                  {% if has_detail %}
+                  <tr id="inst-det-{{ row.id }}" style="display:none">
+                    <td colspan="7" style="padding:0"><div style="padding:10px 16px;background:#0a0f00;border-top:1px solid #1a2800"><p style="font-size:12px;color:#aaa;margin:0;line-height:1.7">{{ row.description }}</p></div></td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% if problem.instances.generator_note %}
+              {% for para in problem.instances.generator_note.split('\n\n') %}<p style="font-size:12px;color:var(--muted);margin-top:8px">{{ para }}</p>{% endfor %}
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>{# end impl-card #}
+          {% endfor %}
+        </div>
       {% endif %}
 
     </div>{# end body #}
-  </div>{# end card #}
+  </div>{# end vp card #}
   {% endfor %}
 
 </div>
 
-{# ═══════════════════════════════════════════════════════════════ REFERENCES #}
-<div id="references" class="panel">
-  <h2>References</h2>
-  {% for ref in problem.references %}
-  <div class="ref" id="ref-{{ ref.key }}">
-    <div class="ref-key">[{{ ref.key }}]</div>
-    <div class="ref-title">
-      {% if ref.url is defined and ref.url %}
-      <a href="{{ ref.url }}" target="_blank" rel="noopener" style="color:#fff;border-bottom:1px solid #333;padding-bottom:1px;transition:border-color .15s" onmouseover="this.style.borderColor='#fff'" onmouseout="this.style.borderColor='#333'">{{ ref.title }}</a>
-      {% else %}{{ ref.title }}{% endif %}
-    </div>
-    <div class="ref-authors">{{ ref.authors }}</div>
-    <div class="ref-venue">{{ ref.venue }}</div>
-    {% if ref.note is defined %}<div class="ref-note">{{ ref.note }}</div>{% endif %}
-  </div>
-  {% endfor %}
-  <h2>BibTeX</h2>
-  <div class="bibtex-block">{{ problem.bibtex }}</div>
-</div>
 
 {# Per-page data: PDDL file contents inlined for the download buttons #}
 <script>

@@ -2,12 +2,14 @@
 title: PDDL Domain (4-operator, typed)
 language: PDDL 2.1
 source: IPC00Archive
-notes: IPC 2000 style. Adds :types block and uses ?b - block throughout, enabling type-based grounding pruning. Semantics are identical to the untyped domain.
+viewpoint_group: strips-4op
+viewpoint_title: "4-Operator STRIPS"
+notes: "IPC 2000 typed formulation. Adds a :types block so all parameters carry the `block` annotation, enabling type-based grounding pruning at no semantic cost."
 ---
 
 ## State Space
 
-Identical to the untyped domain. Typed grounding reduces the search space by excluding ill-typed groundings at no semantic cost.
+A state is a complete assignment of block positions: each block is either on the table or directly on top of exactly one other block; at most one block is held by the arm at any time. The four operators (pick-up, put-down, stack, unstack) suffice to reach any permutation from any other. The state space for n blocks grows as the n-th ordered Bell number — faster than exponential in n.
 
 ## Types
 

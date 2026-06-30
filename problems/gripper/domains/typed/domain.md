@@ -2,12 +2,13 @@
 title: PDDL Domain (typed STRIPS)
 language: PDDL 2.1
 source: McDermott98
-notes: Typed formulation with explicit room, ball, and gripper types. Semantics identical to the base domain; typing replaces unary category predicates with PDDL type declarations.
+viewpoint_group: strips
+notes: "Typed formulation with explicit room, ball, and gripper type declarations. Semantics identical to the untyped base; typing replaces unary category predicates and enables type-based grounding pruning."
 ---
 
 ## State Space
 
-Identical to the base domain.
+Identical to the untyped formulation: a state specifies the room containing the robot, the room of each ball, and which ball each gripper carries. Type declarations eliminate the unary category predicates and reduce the number of valid groundings at no semantic cost.
 
 ## Types
 

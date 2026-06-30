@@ -2,7 +2,9 @@
 title: PDDL Domain (untyped STRIPS)
 language: PDDL 1.2
 source: IPC98Archive
-notes: Untyped formulation from IPC 1998 Round 2. Object categories (package, truck, airplane, city, location, airport) are encoded as unary predicates. Compatible with all PDDL 1.x planners.
+viewpoint_group: strips-transport
+viewpoint_title: "STRIPS Transportation"
+notes: "IPC 1998 untyped formulation. Object categories (package, truck, airplane, city, location, airport) are encoded as unary predicates rather than :types declarations. Compatible with all PDDL 1.x planners."
 instances_description: "Instances of increasing size. n is the number of packages; k* is the optimal plan length where known."
 generator_note: "Instances are parameterised by number of packages, cities, locations per city, trucks, and airplanes. IPC 1998 STRIPS instances: https://github.com/potassco/pddl-instances/tree/master/ipc-1998/domains/logistics-round-2-strips"
 ---

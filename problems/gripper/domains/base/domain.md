@@ -2,7 +2,9 @@
 title: PDDL Domain (untyped STRIPS)
 language: PDDL 1.2
 source: IPC98GripperArchive
-notes: Canonical IPC 1998 untyped formulation. Object types encoded as unary predicates (room, ball, gripper). Compatible with all PDDL 1.x planners.
+viewpoint_group: strips
+viewpoint_title: "STRIPS Formulation"
+notes: "Canonical IPC 1998 untyped formulation. Object categories are encoded as unary predicates (room, ball, gripper) rather than :types declarations. Compatible with all PDDL 1.x planners."
 instances_description: "Instances parameterised by number of balls n. Optimal plan length follows the formula 4⌈n/2⌉ + ⌊n/2⌋ − 1."
 generator_note: "Instances are fully determined by n. All balls start in rooma; all must reach roomb. Robot starts in rooma with both grippers free. IPC 1998 instances: https://github.com/potassco/pddl-instances/tree/master/ipc-1998/domains/gripper-round-1-strips"
 ---
